@@ -75,15 +75,32 @@ header img {
   width: 20%;
   border-radius: 30px;
 }
-
 /* Adaptação para telas menores */
 @media only screen and (max-width: 768px) {
-  .section-events {
-    font-size: 30px; /* Reduz o tamanho da fonte para telas menores */
+  header nav ul {
+    display: none; /* Esconde a lista de navegação principal em telas menores */
+    position: absolute;
+    top: 100%; /* Posiciona o menu dropdown abaixo do cabeçalho */
+    left: 0;
+    width: 100%;
+    background-color: #000000;
+    text-align: center;
+    z-index: 999; /* Garante que o menu dropdown fique sobreposto a outros elementos */
   }
 
-  .section-events img {
-    width: 50%; /* Reduz a largura da imagem para telas menores */
+  header nav ul li {
+    display: block;
+    padding: 20px 0;
+    border-bottom: 1px solid #ffffff; /* Adiciona uma linha entre os itens do menu */
+  }
+
+  header .btn-login {
+    display: none; /* Esconde o botão de login em telas menores */
+  }
+
+  /* Mostra o menu dropdown quando o ícone do menu é clicado */
+  header .menu-icon {
+    display: block;
+    cursor: pointer;
   }
 }
-
