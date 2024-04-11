@@ -75,38 +75,3 @@ header img {
   width: 20%;
   border-radius: 30px;
 }
-
-/* Adaptação para telas menores */
-@media only screen and (max-width: 768px) {
-  header nav ul {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background-color: #000000;
-    text-align: center;
-    z-index: 999;
-  }
-
-  /* Mostra o menu quando o checkbox estiver marcado */
-  #menu-toggle:checked + nav ul {
-    display: block;
-  }
-
-  header nav ul li {
-    display: block;
-    padding: 20px 0;
-    border-bottom: 1px solid #ffffff;
-  }
-
-  header .btn-login {
-    display: none;
-  }
-
-  header .menu-icon {
-    display: block;
-    cursor: pointer;
-    color: #ffffff;
-  }
-}
