@@ -75,3 +75,15 @@ header img {
   width: 20%;
   border-radius: 30px;
 }
+
+/* Adaptação para telas menores */
+@media only screen and (max-width: 768px) {
+  .section-events {
+    font-size: 30px; /* Reduz o tamanho da fonte para telas menores */
+  }
+
+  .section-events img {
+    width: 50%; /* Reduz a largura da imagem para telas menores */
+  }
+}
+
