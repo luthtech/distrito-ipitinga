@@ -75,6 +75,7 @@ header img {
   width: 20%;
   border-radius: 30px;
 }
+
 /* Adaptação para telas menores */
 @media only screen and (max-width: 768px) {
   header nav ul {
@@ -88,6 +89,10 @@ header img {
     z-index: 999; /* Garante que o menu dropdown fique sobreposto a outros elementos */
   }
 
+  header nav ul.active {
+    display: block; /* Mostra o menu dropdown quando a classe "active" é aplicada */
+  }
+
   header nav ul li {
     display: block;
     padding: 20px 0;
@@ -98,9 +103,10 @@ header img {
     display: none; /* Esconde o botão de login em telas menores */
   }
 
-  /* Mostra o menu dropdown quando o ícone do menu é clicado */
+  /* Estilo para o ícone do menu */
   header .menu-icon {
     display: block;
     cursor: pointer;
+    color: #ffffff;
   }
 }
