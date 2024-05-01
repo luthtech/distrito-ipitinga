@@ -18,8 +18,8 @@
     border-top: 16px solid #3498db;
     width: 120px;
     height: 120px;
-    -webkit-animation: spin 2s linear infinite; /* Safari */
-    animation: spin 2s linear infinite;
+    -webkit-animation: spin 7s linear infinite; /* Safari */
+    animation: spin 7s linear infinite;
   }
   
   /* Animação de rotação do spinner */
