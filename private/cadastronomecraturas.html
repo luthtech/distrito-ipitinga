@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Criaturas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        input[type="text"],
+        textarea {
+            padding: 10px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            resize: vertical;
+        }
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .mensagem {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .mensagem.success {
+            background-color: #dff0d8;
+            border-color: #d0e9c6;
+            color: #3c763d;
+        }
+        .mensagem.error {
+            background-color: #f2dede;
+            border-color: #ebccd1;
+            color: #a94442;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cadastro de Criaturas</h1>
+        <form id="formCriatura">
+            <label for="titulo">Título:</label>
+            <input type="text" id="titulo" name="titulo" required>
+            
+            <label for="sigla">Sigla:</label>
+            <textarea id="sigla" name="sigla" rows="6" required></textarea>
+            
+            <button type="submit">Salvar Sigla</button>
+        </form>
+
+        <div id="mensagem" class="mensagem"></div>
+    </div>
+
+    <script>
+        document.getElementById('formCriatura').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const titulo = formData.get('titulo');
+            const sigla = formData.get('sigla');
+
+            fetch('/cadastronomecraturas', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ titulo, sigla }) // Corrigido para enviar 'titulo' e 'corpo'
+            })
+            .then(response => response.json())
+            .then(data => {
+                const mensagemElement = document.getElementById('mensagem');
+                if (data.success) {
+                    mensagemElement.innerHTML = `Criatura salva com sucesso! ID: ${data.id}`;
+                    document.getElementById('formCriatura').reset();
+                    mensagemElement.className = 'mensagem success';
+                } else {
+                    mensagemElement.innerHTML = `Erro ao salvar criatura: ${data.error}`;
+                    mensagemElement.className = 'mensagem error';
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                const mensagemElement = document.getElementById('mensagem');
+                mensagemElement.innerHTML = 'Erro ao comunicar com o servidor';
+                mensagemElement.className = 'mensagem error';
+            });
+        });
+    </script>
+</body>
+</html>

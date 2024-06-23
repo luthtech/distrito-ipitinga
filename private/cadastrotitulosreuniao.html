@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preenchimento de Ata de Reunião</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        input[type="text"],
+        textarea {
+            padding: 10px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            resize: vertical;
+            text-transform: uppercase; /* Garante que o texto seja exibido em maiúsculas no input */
+        }
+        .criaturas {
+            margin-top: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .criaturas button {
+            margin: 5px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #f2f2f2;
+            transition: background-color 0.3s;
+        }
+        .criaturas button:hover {
+            background-color: #ddd;
+        }
+        button[type="submit"] {
+            align-self: center;
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .mensagem {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .mensagem.success {
+            background-color: #dff0d8;
+            border-color: #d0e9c6;
+            color: #3c763d;
+        }
+        .mensagem.error {
+            background-color: #f2dede;
+            border-color: #ebccd1;
+            color: #a94442;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Preenchimento de Ata de Reunião</h1>
+        <form id="formAta">
+            <label for="titulo">Título:</label>
+            <input type="text" id="titulo" name="titulo" required oninput="this.value = this.value.toUpperCase()">
+            <div class="criaturas" id="criaturas"> <!-- Adicionei o div para criaturas -->
+            </div>
+            <label for="corpo">Corpo do Texto:</label>
+            <textarea id="corpo" name="corpo" rows="6" required></textarea>
+            <button type="submit">Salvar Ata</button>
+        </form>
+    
+        <div id="mensagem" class="mensagem"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/nomecraturas')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao carregar criaturas');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const criaturasContainer = document.getElementById('criaturas');
+                    if (data.success) {
+                        data.texts.forEach(criatura => {
+                            const button = document.createElement('button');
+                            button.textContent = criatura.titulo;
+                            button.addEventListener('click', () => {
+                                insertTextAtCursor('corpo', criatura.sigla);
+                            });
+                            criaturasContainer.appendChild(button);
+                        });
+                    } else {
+                        throw new Error(data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar criaturas:', error);
+                });
+        });
+
+        // Função para inserir texto no cursor do textarea
+        function insertTextAtCursor(textareaId, text) {
+            const textarea = document.getElementById(textareaId);
+            const cursorPos = textarea.selectionStart;
+            const textBeforeCursor = textarea.value.substring(0, cursorPos);
+            const textAfterCursor = textarea.value.substring(cursorPos);
+            textarea.value = textBeforeCursor + text + textAfterCursor;
+            textarea.selectionStart = textarea.selectionEnd = cursorPos + text.length;
+            textarea.focus();
+        }
+
+        // Evitar submissão ao clicar nos botões de criaturas
+        document.getElementById('criaturas').addEventListener('click', function(event) {
+            if (event.target.tagName === 'BUTTON') {
+                event.preventDefault();
+            }
+        });
+
+        // Enviar formulário de Ata ao servidor
+        document.getElementById('formAta').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const titulo = formData.get('titulo');
+            const corpo = formData.get('corpo');
+
+            fetch('/cadastrotitulosreuniao', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ titulo, corpo })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao salvar título');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const mensagemElement = document.getElementById('mensagem');
+                if (data.success) {
+                    mensagemElement.innerHTML = `Título salvo com sucesso! ID: ${data.id}`;
+                    document.getElementById('formAta').reset();
+                    mensagemElement.className = 'mensagem success';
+                } else {
+                    throw new Error(data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                const mensagemElement = document.getElementById('mensagem');
+                mensagemElement.innerHTML = `Erro ao salvar título: ${error.message}`;
+                mensagemElement.className = 'mensagem error';
+            });
+        });
+    </script>
+</body>
+</html>
